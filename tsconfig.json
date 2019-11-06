@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "preserveSymlinks": true,
-    "outDir": "build",
-    "module": "esNext",
+    "outDir": "build/src",
     "moduleResolution": "node",
     "target": "es5",
     "sourceMap": true,
@@ -20,6 +19,5 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "exclude": ["node_modules"],
-  "include": ["./types/**/*.d.ts", "**/*.ts", "**/*.tsx"]
+  "files": ["src/index.ts"]
 }
