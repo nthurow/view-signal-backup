@@ -7,13 +7,14 @@
     "format": "yarn format:nowrite --write",
     "format:nowrite": "prettier --ignore-path .gitignore \"**/*.+(js|ts|tsx|html|css|scss|json)\"",
     "format:check": "yarn format:nowrite --list-different",
-    "pbjs": "pbjs -t static-module -w commonjs -o src/BackupFrame.js proto/BackupFrame.proto",
-    "pbts": "pbts -o src/BackupFrame.d.ts src/BackupFrame.js"
+    "pbjs": "pbjs -t static-module -w commonjs -o src/signal/index.js proto/signal.proto",
+    "pbts": "pbts -o src/signal/index.d.ts src/signal/index.js"
   },
   "dependencies": {
     "protobufjs": "^6.8.8"
   },
   "devDependencies": {
+    "@types/node": "10",
     "chalk": "^2.4.1",
     "escodegen": "^1.9.1",
     "espree": "^3.5.4",

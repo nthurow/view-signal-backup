@@ -65,7 +65,7 @@
   resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/@types/long/-/long-4.0.0.tgz#719551d2352d301ac8b81db732acb6bdc28dbdef"
   integrity sha1-cZVR0jUtMBrIuB23Mqy2vcKNve8=
 
-"@types/node@^10.1.0":
+"@types/node@10", "@types/node@^10.1.0":
   version "10.17.4"
   resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/@types/node/-/node-10.17.4.tgz#8993a4fe3c4022fda66bf4ea660d615fc5659c6f"
   integrity sha1-iZOk/jxAIv2ma/TqZg1hX8VlnG8=
