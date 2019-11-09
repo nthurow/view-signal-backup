@@ -1,13 +1,14 @@
 import {readFileSync} from 'fs';
 import {join} from 'path';
 
-import {nextFrame} from './frame';
+import {decodeBytesToFrame, nextFrameBytes} from './frame';
 import {deriveKeyFromPassword} from './crypto';
 
 const file = readFileSync(join(__dirname, '../../signal-2019-11-06-13-00-54.backup'));
 const password = '';
 
-let [backupFrame] = nextFrame(file, 0);
+let [backupFrame] = nextFrameBytes(file, 0);
+backupFrame = decodeBytesToFrame(backupFrame);
 
 async function getBaseKey() {
   if (!backupFrame.header || !backupFrame.header.salt) {
