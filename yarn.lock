@@ -414,6 +414,11 @@ has-glob@^0.1.1:
   dependencies:
     is-glob "^2.0.1"
 
+hkdf@^0.0.2:
+  version "0.0.2"
+  resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/hkdf/-/hkdf-0.0.2.tgz#2f8db615fdef870201f82d2b619ca6d347d0647e"
+  integrity sha1-L422Ff3vhwIB+C0rYZym00fQZH4=
+
 homedir-polyfill@^1.0.0:
   version "1.0.3"
   resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/homedir-polyfill/-/homedir-polyfill-1.0.3.tgz#743298cef4e5af3e194161fbadcc2151d3a058e8"

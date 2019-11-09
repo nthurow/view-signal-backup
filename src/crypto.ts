@@ -1,5 +1,6 @@
 import {TextDecoder, TextEncoder} from 'util';
 import {createHash} from 'crypto';
+const Hkdf = require('hkdf');
 
 export async function deriveKeyFromPassword(password: string, salt: ArrayBuffer) {
   const textEncoder = new TextEncoder();
@@ -16,4 +17,12 @@ export async function deriveKeyFromPassword(password: string, salt: ArrayBuffer)
   return textEncoder.encode(previousHash).slice(0, 32);
 }
 
-export function deriveAesKeys(baseKey: Buffer, info: string) {}
+export function deriveAesKeys(baseKey: Uint8Array, info: string): Promise<Buffer> {
+  const hkdf = new Hkdf('sha256', '', baseKey);
+
+  return new Promise((resolve) => {
+    hkdf.derive(info, 64, (key: Buffer) => {
+      resolve(key);
+    });
+  });
+}
