@@ -15,7 +15,8 @@
     "start": "node ./build/src/index.js"
   },
   "dependencies": {
-    "protobufjs": "^6.8.8"
+    "protobufjs": "^6.8.8",
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
     "@types/node": "10",

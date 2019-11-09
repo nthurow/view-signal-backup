@@ -1,14 +1,27 @@
 import {readFileSync} from 'fs';
 import {join} from 'path';
 
-import {signal} from './signal';
+import {nextFrame} from './frame';
+import {deriveKeyFromPassword} from './crypto';
 
 const file = readFileSync(join(__dirname, '../../signal-2019-11-06-13-00-54.backup'));
-const headerLengthBytes = file.slice(0, 4);
-const headerLength = headerLengthBytes.readUIntBE(0, 4);
-const headerFrame = file.slice(4, 4 + headerLength);
+const password = '';
 
-const backupFrame = signal.BackupFrame.decode(headerFrame);
+let [backupFrame] = nextFrame(file, 0);
+
+async function getBaseKey() {
+  if (!backupFrame.header || !backupFrame.header.salt) {
+    throw new Error('Salt value not found');
+  }
+
+  const baseKey = await deriveKeyFromPassword(password, backupFrame.header.salt);
+
+  console.log('The base key is ', baseKey);
+}
+
+getBaseKey();
+
+/*
 
 if (backupFrame) {
   if (backupFrame.header) {
@@ -19,3 +32,4 @@ if (backupFrame) {
 } else {
   console.log('Invalid data');
 }
+*/

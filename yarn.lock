@@ -905,6 +905,11 @@ to-object-path@^0.3.0:
   dependencies:
     kind-of "^3.0.2"
 
+tslib@^1.10.0:
+  version "1.10.0"
+  resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+  integrity sha1-w8GflZc/sKYpc/sJ2Q2WHuQ+XIo=
+
 type-check@~0.3.2:
   version "0.3.2"
   resolved "https://repo1.uhc.com/artifactory/api/npm/npm-virtual/type-check/-/type-check-0.3.2.tgz#5884cab512cf1d355e3fb784f30804b2b520db72"
