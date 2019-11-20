@@ -28,6 +28,8 @@ func backupKey(password string, salt []byte) []byte {
 }
 
 func main() {
-  key := backupKey("password", nil)
+  salt := []byte{0, 1, 2, 3};
+  key := backupKey("password", salt)
+  fmt.Println(hex.EncodeToString(salt))
   fmt.Println(hex.EncodeToString(key))
 }
