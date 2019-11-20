@@ -12,6 +12,7 @@
     "build": "tsc",
     "copy": "copy src/**/*.js src/**/*.d.ts build/",
     "build:copy": "yarn build && yarn copy",
+    "test": "jest",
     "start": "node ./build/src/index.js"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "tslib": "^1.10.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.23",
     "@types/node": "10",
     "chalk": "^2.4.1",
     "copy": "^0.3.2",
@@ -27,11 +29,13 @@
     "espree": "^3.5.4",
     "estraverse": "^4.2.0",
     "glob": "^7.1.2",
+    "jest": "^24.9.0",
     "jsdoc": "^3.5.5",
     "minimist": "^1.2.0",
     "prettier": "^1.18.2",
     "semver": "^5.5.0",
     "tmp": "0.0.33",
+    "ts-jest": "^24.1.0",
     "typescript": "^3.7.2",
     "uglify-js": "^3.3.25"
   }
