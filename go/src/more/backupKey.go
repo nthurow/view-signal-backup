@@ -3,9 +3,13 @@ package main
 import (
   "fmt"
   "crypto"
+  _ "crypto/sha256"
   _ "crypto/sha512"
   "encoding/hex"
   "strings"
+  "io"
+  "os"
+  "golang.org/x/crypto/hkdf"
 )
 
 func backupKey(password string, salt []byte) []byte {
@@ -27,9 +31,23 @@ func backupKey(password string, salt []byte) []byte {
   return hash[:32]
 }
 
+func deriveSecrets(input, info []byte) []byte {
+  sha := crypto.SHA256.New
+  salt := make([]byte, sha().Size())
+  okm := make([]byte, 64)
+
+  hkdf := hkdf.New(sha, input, salt, info)
+  _, err := io.ReadFull(hkdf, okm)
+  if err != nil {
+    fmt.Fprintln(os.Stderr, "failed to generate hashes:", err.Error())
+  }
+
+  return okm
+}
+
 func main() {
   salt := []byte{0, 1, 2, 3};
   key := backupKey("password", salt)
-  fmt.Println(hex.EncodeToString(salt))
-  fmt.Println(hex.EncodeToString(key))
+  derived := deriveSecrets(key, []byte("Backup Export"))
+  fmt.Println(hex.EncodeToString(derived))
 }
