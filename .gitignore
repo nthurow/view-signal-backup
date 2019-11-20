@@ -1,5 +1,7 @@
+.vscode/
 node_modules/
 build/
 go/pkg/
 go/src/more/vendor/
+go/src/more/more
 signal-*.backup
