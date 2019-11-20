@@ -48,6 +48,7 @@ func deriveSecrets(input, info []byte) []byte {
 func main() {
   salt := []byte{0, 1, 2, 3};
   key := backupKey("password", salt)
+  fmt.Println(hex.EncodeToString(key))
   derived := deriveSecrets(key, []byte("Backup Export"))
   fmt.Println(hex.EncodeToString(derived))
 }
