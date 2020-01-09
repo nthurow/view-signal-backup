@@ -1,20 +1,23 @@
-import {readFileSync} from 'fs';
 import {join} from 'path';
-//import {createHmac} from 'crypto';
 
-import {decodeBytesToFrame, nextFrameBytes} from './frame';
+import {signal} from './signal';
 import {deriveKeyFromPassword, deriveAesKeys, decrypt} from './crypto';
+import {FileStreamAdapter, FrameReader} from './streams';
 
-const file = readFileSync(join(__dirname, '../../signal-2019-11-06-13-00-54.backup'));
-const password = '773833201388556275077355922518';
+const backupFileStreamAdapter = new FileStreamAdapter(join(__dirname, '../../signal-2019-11-06-13-00-54.backup'));
+const frameReader = new FrameReader(backupFileStreamAdapter);
 
-let [backupFrameBytes, newOffset] = nextFrameBytes(file, 0);
-const backupFrame = decodeBytesToFrame(backupFrameBytes);
+async function main() {
+  const password = '773833201388556275077355922518';
 
-console.log('Backup frame bytes begin: ', backupFrameBytes.slice(0, 10));
-console.log('Backup frame bytes end: ', backupFrameBytes.slice(backupFrameBytes.length - 10, backupFrameBytes.length));
+  const backupFrameBytes = frameReader.next();
 
-async function getBaseKey() {
+  if (!backupFrameBytes) {
+    throw new Error('No backup frame found');
+  }
+
+  const backupFrame = signal.BackupFrame.decode(backupFrameBytes);
+
   if (!backupFrame.header || !backupFrame.header.salt) {
     throw new Error('Salt value not found');
   }
@@ -24,44 +27,21 @@ async function getBaseKey() {
   }
 
   const baseKey = await deriveKeyFromPassword(password, backupFrame.header.salt);
-  //const baseKey = await deriveKeyFromPassword('password');
   const derivedKey = await deriveAesKeys(baseKey, 'Backup Export');
-
   const cipherKey = derivedKey.slice(0, 32);
 
-  console.log(
-    'The base key is ',
-    Buffer.from(baseKey).map((num, index) => Buffer.from(baseKey).readUInt8(index))
-  );
-  console.log('The derived key is', derivedKey);
-  console.log('The cipher key is', cipherKey);
+  const nextFrame = frameReader.next();
 
-  //const macKey = derivedKey.slice(32);
-  //const mac = createHmac('sha256', macKey);
-  //const counter = Buffer.from(backupFrame.header.iv).readUInt32BE(0);
-  let [nextFrame] = nextFrameBytes(file, newOffset);
-
-  console.log('Next frame length: ', nextFrame.length);
-  console.log('Next frame bytes begin: ', nextFrame.slice(0, 10));
-  console.log('Next frame bytes end: ', nextFrame.slice(nextFrame.length - 10, nextFrame.length));
+  if (!nextFrame) {
+    throw new Error('Next frame not found');
+  }
 
   decrypt(nextFrame.slice(0, nextFrame.length - 10), 0, cipherKey, backupFrame.header.iv, (decrypted) => {
-    const decryptedFrame = decodeBytesToFrame(decrypted);
+    const decryptedFrame = signal.BackupFrame.decode(decrypted);
     console.log(decryptedFrame);
   });
 }
 
-getBaseKey();
-
-/*
-
-if (backupFrame) {
-  if (backupFrame.header) {
-    console.log('IV value: ', backupFrame.header.iv);
-  } else {
-    console.log('No header found');
-  }
-} else {
-  console.log('Invalid data');
-}
-*/
+backupFileStreamAdapter.fileStream.once('readable', () => {
+  main();
+});
