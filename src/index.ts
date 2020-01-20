@@ -30,13 +30,24 @@ async function main() {
   const derivedKey = await deriveAesKeys(baseKey, 'Backup Export');
   const cipherKey = derivedKey.slice(0, 32);
 
-  const nextFrame = frameReader.next();
+  let nextFrame = frameReader.next();
 
   if (!nextFrame) {
     throw new Error('Next frame not found');
   }
 
-  decrypt(nextFrame.slice(0, nextFrame.length - 10), 0, cipherKey, backupFrame.header.iv, (decrypted) => {
+  let newIv = decrypt(nextFrame.slice(0, nextFrame.length - 10), 0, cipherKey, backupFrame.header.iv, (decrypted) => {
+    const decryptedFrame = signal.BackupFrame.decode(decrypted);
+    console.log(decryptedFrame);
+  });
+
+  nextFrame = frameReader.next();
+
+  if (!nextFrame) {
+    throw new Error('Next frame not found');
+  }
+
+  newIv = decrypt(nextFrame.slice(0, nextFrame.length - 10), 0, cipherKey, newIv, (decrypted) => {
     const decryptedFrame = signal.BackupFrame.decode(decrypted);
     console.log(decryptedFrame);
   });

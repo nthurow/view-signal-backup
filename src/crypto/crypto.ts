@@ -41,6 +41,9 @@ export function decrypt(
   iv: Uint8Array,
   cb: (decrypted: Buffer) => void
 ) {
+  console.log('Decrypting Bytes Start:', bytes.slice(0, 10));
+  console.log('Decrypting Bytes End:', bytes.slice(bytes.length - 10));
+  console.log('IV:', iv);
   const decipher = createDecipheriv('AES-256-CTR', cipherKey, iv);
   //let decrypted = '';
   let decryptedBytes = Buffer.alloc(0);
@@ -60,4 +63,21 @@ export function decrypt(
 
   decipher.write(bytes);
   decipher.end();
+
+  const ivInt = Buffer.from(iv).readUInt32BE(0) + 1;
+  const newIv = Buffer.from(iv);
+
+  const firstByte = ivInt >>> 24;
+  const secondByte = (ivInt >>> 16) & 255;
+  const thirdByte = (ivInt >>> 8) & 255;
+  const fourthByte = ivInt & 255;
+
+  newIv.writeUInt8(firstByte, 0);
+  newIv.writeUInt8(secondByte, 1);
+  newIv.writeUInt8(thirdByte, 2);
+  newIv.writeUInt8(fourthByte, 3);
+
+  console.log('New IV:', newIv);
+
+  return newIv;
 }
