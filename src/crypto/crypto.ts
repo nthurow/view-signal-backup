@@ -2,9 +2,16 @@ import {/*TextDecoder,*/ TextEncoder} from 'util';
 import {createHash, createDecipheriv} from 'crypto';
 const Hkdf = require('hkdf');
 
+const logLevel = process.env.LOG_LEVEL;
+
+function log(...message: any[]) {
+  if (logLevel === 'DEBUG') {
+    console.log(...message);
+  }
+}
+
 export async function deriveKeyFromPassword(password: string, salt?: Uint8Array) {
   const textEncoder = new TextEncoder();
-  //const textDecoder = new TextDecoder();
   const normalizedPassword = textEncoder.encode(password.trim().replace(/\s/g, ''));
   let previousHash = normalizedPassword;
 
@@ -41,24 +48,20 @@ export function decrypt(
   iv: Uint8Array,
   cb: (decrypted: Buffer) => void
 ) {
-  console.log('Decrypting Bytes Start:', bytes.slice(0, 10));
-  console.log('Decrypting Bytes End:', bytes.slice(bytes.length - 10));
-  console.log('IV:', iv);
+  log('Decrypting Bytes Start:', bytes.slice(0, 10));
+  log('Decrypting Bytes End:', bytes.slice(bytes.length - 10));
+  log('IV:', iv);
   const decipher = createDecipheriv('AES-256-CTR', cipherKey, iv);
-  //let decrypted = '';
   let decryptedBytes = Buffer.alloc(0);
 
   decipher.on('readable', () => {
     let chunk;
     while (null !== (chunk = decipher.read())) {
-      //decrypted += chunk.toString('utf8');
       decryptedBytes = Buffer.concat([decryptedBytes, chunk]);
     }
   });
   decipher.on('end', () => {
-    //console.log(decrypted);
     cb(decryptedBytes);
-    // Prints: e5f79c5915c02171eec6b212d5520d44480993d7d622a7c4c2da32f6efda0ffa
   });
 
   decipher.write(bytes);
@@ -77,7 +80,7 @@ export function decrypt(
   newIv.writeUInt8(thirdByte, 2);
   newIv.writeUInt8(fourthByte, 3);
 
-  console.log('New IV:', newIv);
+  log('New IV:', newIv);
 
   return newIv;
 }
