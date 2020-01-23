@@ -41,16 +41,12 @@ export function deriveAesKeys(baseKey: Uint8Array, info: string): Promise<Buffer
   });
 }
 
-export function decrypt(
-  bytes: Buffer,
-  counter: number,
-  cipherKey: Buffer,
-  iv: Uint8Array,
-  cb: (decrypted: Buffer) => void
-) {
+// TODO: Handle errors
+export function decrypt(bytes: Buffer, cipherKey: Buffer, iv: Uint8Array, cb: (decrypted: Buffer) => void) {
   log('Decrypting Bytes Start:', bytes.slice(0, 10));
   log('Decrypting Bytes End:', bytes.slice(bytes.length - 10));
   log('IV:', iv);
+
   const decipher = createDecipheriv('AES-256-CTR', cipherKey, iv);
   let decryptedBytes = Buffer.alloc(0);
 
@@ -60,7 +56,10 @@ export function decrypt(
       decryptedBytes = Buffer.concat([decryptedBytes, chunk]);
     }
   });
+
   decipher.on('end', () => {
+    console.log('decrypted bytes:');
+    console.log(decryptedBytes.toString('hex'));
     cb(decryptedBytes);
   });
 

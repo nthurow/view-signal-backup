@@ -34,7 +34,7 @@ async function main() {
   let nextFrame: Buffer | null = null;
 
   while ((nextFrame = frameReader.next())) {
-    iv = decrypt(nextFrame.slice(0, nextFrame.length - 10), 0, cipherKey, iv, (decrypted) => {
+    iv = decrypt(nextFrame.slice(0, nextFrame.length - 10), cipherKey, iv, (decrypted) => {
       const decryptedFrame = signal.BackupFrame.decode(decrypted);
 
       if (decryptedFrame.statement && decryptedFrame.statement.parameters) {
