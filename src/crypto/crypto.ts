@@ -58,8 +58,6 @@ export function decrypt(bytes: Buffer, cipherKey: Buffer, iv: Uint8Array, cb: (d
   });
 
   decipher.on('end', () => {
-    console.log('decrypted bytes:');
-    console.log(decryptedBytes.toString('hex'));
     cb(decryptedBytes);
   });
 
