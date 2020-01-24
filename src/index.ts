@@ -3,6 +3,7 @@ import {join} from 'path';
 import {signal} from './signal';
 import {deriveKeyFromPassword, deriveAesKeys, decrypt} from './crypto';
 import {FileStreamAdapter, FrameReader} from './streams';
+import {getSmsFromStatement, isSmsStatement} from './Sms';
 
 const backupFileStreamAdapter = new FileStreamAdapter(join(__dirname, '../../signal-2019-11-06-13-00-54.backup'));
 const frameReader = new FrameReader(backupFileStreamAdapter);
@@ -37,13 +38,20 @@ async function main() {
     iv = decrypt(nextFrame.slice(0, nextFrame.length - 10), cipherKey, iv, (decrypted) => {
       const decryptedFrame = signal.BackupFrame.decode(decrypted);
 
+      if (isSmsStatement(decryptedFrame)) {
+        const sms = getSmsFromStatement(decryptedFrame);
+        console.log(sms);
+      }
+
+      /*
       if (decryptedFrame.statement && decryptedFrame.statement.parameters) {
         decryptedFrame.statement.parameters.forEach((parameter) => {
           console.log(parameter);
         });
       }
 
-      // console.log(decryptedFrame);
+      console.log(decryptedFrame);
+      */
     });
   }
 }
